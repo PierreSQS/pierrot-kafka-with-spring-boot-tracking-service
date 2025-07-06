@@ -1,5 +1,6 @@
 package dev.lydtech.tracking.handler;
 
+import dev.lydtech.tracking.event.DispatchPreparing;
 import dev.lydtech.tracking.service.TrackingService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -25,9 +26,9 @@ public class DispatchTrackingHandler {
             topics = "dispatch.tracking",
             groupId = "dispatch.dispatch.tracking.consumer"
     )
-    public void listen(String payload) {
+    public void listen(DispatchPreparing payload) {
         // This method will be called when a message is received from the "dispatch.tracking" topic
-        // The payload is expected to be a String
+        // The payload is expected to be a DispatchPreparing object
         log.info("Received tracking message: {}", payload);
 
         trackingService.process(payload);
