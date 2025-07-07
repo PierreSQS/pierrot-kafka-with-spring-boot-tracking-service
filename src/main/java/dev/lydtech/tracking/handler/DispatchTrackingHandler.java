@@ -24,7 +24,8 @@ public class DispatchTrackingHandler {
     @KafkaListener(
             id = "trackingConsumerClient",
             topics = "dispatch.tracking",
-            groupId = "dispatch.dispatch.tracking.consumer"
+            groupId = "dispatch.dispatch.tracking.consumer",
+            containerFactory = "kafkaListenerContainerFactory"
     )
     public void listen(DispatchPreparing payload) {
         // This method will be called when a message is received from the "dispatch.tracking" topic
