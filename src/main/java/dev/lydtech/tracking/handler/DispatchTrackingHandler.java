@@ -32,6 +32,10 @@ public class DispatchTrackingHandler {
         // The payload is expected to be a DispatchPreparing object
         log.info("Received tracking message: {}", payload);
 
-        trackingService.process(payload);
+        try {
+            trackingService.process(payload);
+        } catch (Exception e) {
+            log.error("Error processing tracking message: {}", payload, e);
+        }
     }
 }
