@@ -24,7 +24,7 @@ class DispatchTrackingHandlerTest {
     }
 
     @Test
-    void listen() {
+    void listen() throws Exception {
         dispatchTrackingHandler.listen(dispatchPreparing);
         verify(trackingServMock).process(dispatchPreparing);
     }
