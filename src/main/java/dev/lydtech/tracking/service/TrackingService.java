@@ -13,7 +13,7 @@ import org.springframework.stereotype.Service;
 @Service
 public class TrackingService {
 
-    private static final String TRACKING_TOPIC = "dispatch.tracking";
+    private static final String TRACKING_TOPIC = "tracking.status";
 
     private final KafkaTemplate<String, Object> kafkaTemplate;
 
@@ -32,6 +32,6 @@ public class TrackingService {
         log.info("Sending tracking status update for order ID: {}", payload.getOrderId());
         kafkaTemplate.send(TRACKING_TOPIC, trackingStatusUpdated).get();
 
-        log.info("Tracking information processed for payload: {}", payload);
+        log.info("Tracking information processed : {}", trackingStatusUpdated);
     }
 }
