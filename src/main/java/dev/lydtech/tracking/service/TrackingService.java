@@ -18,9 +18,9 @@ public class TrackingService {
     private final KafkaTemplate<String, Object> kafkaTemplate;
 
     public void process(DispatchPreparing payload) throws Exception {
-        log.info("Processing tracking payload: {}", payload);
+        log.info("Processing DispatchPreparing payload: {}", payload);
 
-        // Process the tracking information
+        // Process the DispatchPreparing information
 
         // 1. Create a tracking status update
         TrackingStatusUpdated trackingStatusUpdated = TrackingStatusUpdated.builder()

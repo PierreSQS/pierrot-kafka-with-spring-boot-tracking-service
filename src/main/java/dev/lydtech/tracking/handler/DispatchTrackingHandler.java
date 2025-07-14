@@ -30,7 +30,7 @@ public class DispatchTrackingHandler {
     public void listen(DispatchPreparing payload) {
         // This method will be called when a message is received from the "dispatch.tracking" topic
         // The payload is expected to be a DispatchPreparing object
-        log.info("Received tracking message: {}", payload);
+        log.info("Received DispatchPreparing payload: {}", payload);
 
         try {
             trackingService.process(payload);
