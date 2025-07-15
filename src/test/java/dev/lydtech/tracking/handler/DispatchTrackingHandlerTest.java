@@ -6,6 +6,7 @@ import dev.lydtech.tracking.util.TestEventData;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 
@@ -24,8 +25,22 @@ class DispatchTrackingHandlerTest {
     }
 
     @Test
-    void listen() throws Exception {
+    void listen_Success() throws Exception {
         dispatchTrackingHandler.listen(dispatchPreparing);
         verify(trackingServMock).process(dispatchPreparing);
+    }
+
+    @Test
+    void listen_ServiceThrowsException() throws Exception {
+        // given
+        // Mock the service to throw an exception when processing the event
+        doThrow(new RuntimeException("Service failure")).when(trackingServMock).process(dispatchPreparing);
+
+        // when
+        dispatchTrackingHandler.listen(dispatchPreparing);
+
+        // verify that the service was called
+        verify(trackingServMock).process(dispatchPreparing);
+
     }
 }

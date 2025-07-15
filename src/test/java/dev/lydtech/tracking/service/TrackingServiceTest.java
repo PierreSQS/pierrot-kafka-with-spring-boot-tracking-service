@@ -11,6 +11,7 @@ import org.springframework.kafka.core.KafkaTemplate;
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 
+import static org.assertj.core.api.AssertionsForClassTypes.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.BDDMockito.given;
@@ -30,7 +31,7 @@ class TrackingServiceTest {
     }
 
     @Test
-    void process() throws Exception {
+    void process_Success() throws Exception {
 
         // Given a DispatchPreparing event
         DispatchPreparing dispatchPreparing = TestEventData.buildDispatchPreparingEvent(UUID.randomUUID());
@@ -48,7 +49,21 @@ class TrackingServiceTest {
 
         // Verify that the event was sent to the Kafka topic
         verify(kafkaProducerMock).send("tracking.status", trackingStatusUpdated);
+    }
 
+    @Test
+    void process_ProducerThrowsException() {
+        // Given a DispatchPreparing event
+        DispatchPreparing dispatchPreparing = TestEventData.buildDispatchPreparingEvent(UUID.randomUUID());
+
+        // Mock the Kafka producer to throw an exception when sending the event
+        given(kafkaProducerMock.send(eq("tracking.status"), any(TrackingStatusUpdated.class)))
+                .willThrow(new RuntimeException("Producer failure"));
+
+        // When the process method is called, it should throw an exception
+        assertThatThrownBy(() -> trackingService.process(dispatchPreparing))
+                .isInstanceOf(RuntimeException.class)
+                .hasMessage("Producer failure");
 
     }
 }
