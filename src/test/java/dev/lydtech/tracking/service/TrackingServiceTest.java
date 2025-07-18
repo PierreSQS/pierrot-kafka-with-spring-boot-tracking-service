@@ -1,8 +1,8 @@
 package dev.lydtech.tracking.service;
 
-import dev.lydtech.tracking.event.DispatchPreparing;
-import dev.lydtech.tracking.event.Status;
-import dev.lydtech.tracking.event.TrackingStatusUpdated;
+import dev.lydtech.dispatch.event.DispatchPreparing;
+import dev.lydtech.dispatch.event.Status;
+import dev.lydtech.dispatch.event.TrackingStatusUpdated;
 import dev.lydtech.tracking.util.TestEventData;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;

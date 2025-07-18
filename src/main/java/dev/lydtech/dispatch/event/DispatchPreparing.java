@@ -1,4 +1,4 @@
-package dev.lydtech.tracking.event;
+package dev.lydtech.dispatch.event;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -11,7 +11,6 @@ import java.util.UUID;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class TrackingStatusUpdated {
+public class DispatchPreparing {
     private UUID orderId;
-    private Status status;
 }

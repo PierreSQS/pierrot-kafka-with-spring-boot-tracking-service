@@ -1,6 +1,6 @@
 package dev.lydtech.tracking.handler;
 
-import dev.lydtech.tracking.event.DispatchPreparing;
+import dev.lydtech.dispatch.event.DispatchPreparing;
 import dev.lydtech.tracking.service.TrackingService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

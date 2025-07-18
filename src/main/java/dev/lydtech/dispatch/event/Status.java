@@ -1,4 +1,4 @@
-package dev.lydtech.tracking.event;
+package dev.lydtech.dispatch.event;
 
 public enum Status {
     DISPATCH_PREPARING,
