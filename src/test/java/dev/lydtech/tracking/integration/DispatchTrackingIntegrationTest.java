@@ -6,7 +6,10 @@ import dev.lydtech.tracking.service.TrackingService;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.context.TestConfiguration;
+import org.springframework.context.annotation.Bean;
 import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.kafka.test.context.EmbeddedKafka;
 import org.springframework.messaging.handler.annotation.Payload;
@@ -23,6 +26,10 @@ import java.util.concurrent.atomic.AtomicInteger;
 class DispatchTrackingIntegrationTest {
 
 
+    @Autowired
+    KafkaTestListener kafkaTestListener;
+
+
 
     @BeforeEach
     void setUp() {
@@ -31,6 +38,16 @@ class DispatchTrackingIntegrationTest {
 
     @Test
     void testDispatchTrackingFlow() {
+    }
+
+    @TestConfiguration
+    static class TestConfig {
+
+        @Bean
+        public KafkaTestListener kafkaTestListener() {
+            return new KafkaTestListener();
+        }
+
     }
 
     // Kafka Listener Container
