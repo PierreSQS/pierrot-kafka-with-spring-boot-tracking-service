@@ -13,7 +13,7 @@ import org.springframework.stereotype.Service;
 @Service
 public class TrackingService {
 
-    private static final String TRACKING_TOPIC = "tracking.status";
+    public static final String TRACKING_TOPIC = "tracking.status";
 
     private final KafkaTemplate<String, Object> kafkaTemplate;
 
