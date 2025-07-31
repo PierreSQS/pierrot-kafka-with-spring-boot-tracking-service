@@ -60,7 +60,7 @@ class DispatchTrackingIntegrationTest {
         DispatchPreparing dispatchPreparing = TestEventData.buildDispatchPreparingEvent(UUID.randomUUID());
 
         log.info("Sending DispatchPreparing event: {}", dispatchPreparing);
-        sendEventMessage(DISPATCH_TRACKING_TOPIC, dispatchPreparing);
+        sendEventMessage(TrackingService.TRACKING_TOPIC, dispatchPreparing);
 
         log.info("Waiting for DispatchPreparing event to be processed...");
         // Wait for the listener to process the event
@@ -93,7 +93,7 @@ class DispatchTrackingIntegrationTest {
 
         AtomicInteger dispatchedPreparingCounter = new AtomicInteger(0);
 
-        @KafkaListener(topics = TrackingService.TRACKING_TOPIC, groupId = "KafkaIntegrationTestGroup",
+        @KafkaListener(topics = DISPATCH_TRACKING_TOPIC, groupId = "KafkaIntegrationTestGroup",
                 containerFactory = "kafkaListenerContainerFactory")
 
         public void listen(final @Payload DispatchPreparing payload) {
