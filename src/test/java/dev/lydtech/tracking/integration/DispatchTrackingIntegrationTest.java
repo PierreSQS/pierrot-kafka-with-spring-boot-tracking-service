@@ -21,7 +21,11 @@ import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ActiveProfiles;
 
 import java.util.UUID;
+import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
+
+import static org.awaitility.Awaitility.await;
+import static org.hamcrest.Matchers.equalTo;
 
 @Slf4j
 @SpringBootTest(classes = {TrackingConfiguration.class})
@@ -57,6 +61,11 @@ class DispatchTrackingIntegrationTest {
 
         log.info("Sending DispatchPreparing event: {}", dispatchPreparing);
         sendEventMessage(DISPATCH_TRACKING_TOPIC, dispatchPreparing);
+
+        log.info("Waiting for DispatchPreparing event to be processed...");
+        // Wait for the listener to process the event
+        await().atMost(10, TimeUnit.SECONDS)
+                .until(() -> kafkaTestListener.dispatchedPreparingCounter.get(), equalTo(1));
 
         log.info("Ending DispatchTrackingIntegrationTest...");
 
