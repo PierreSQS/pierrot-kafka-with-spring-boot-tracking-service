@@ -1,6 +1,7 @@
 package dev.lydtech.tracking.integration;
 
 import dev.lydtech.dispatch.event.DispatchPreparing;
+import dev.lydtech.dispatch.event.TrackingStatusUpdated;
 import dev.lydtech.tracking.config.TrackingConfiguration;
 import dev.lydtech.tracking.service.TrackingService;
 import dev.lydtech.tracking.util.TestEventData;
@@ -55,7 +56,7 @@ class DispatchTrackingIntegrationTest {
 
     @BeforeEach
     void setUp() {
-        kafkaTestListener.dispatchedPreparingCounter.set(0);
+        kafkaTestListener.trackingStatusCounter.set(0);
 
         // Ensure that the Kafka partitions are assigned to the listener containers
         kafkaListenerEndpointRegistry.getListenerContainers().forEach(container ->
@@ -74,12 +75,12 @@ class DispatchTrackingIntegrationTest {
         DispatchPreparing dispatchPreparing = TestEventData.buildDispatchPreparingEvent(UUID.randomUUID());
 
         log.info("Sending DispatchPreparing event: {}", dispatchPreparing);
-        sendEventMessage(TrackingService.TRACKING_TOPIC, dispatchPreparing);
+        sendEventMessage(DISPATCH_TRACKING_TOPIC, dispatchPreparing);
 
         log.info("Waiting for DispatchPreparing event to be processed...");
         // Wait for the listener to process the event
         await().atMost(10, TimeUnit.SECONDS)
-                .until(() -> kafkaTestListener.dispatchedPreparingCounter.get(), equalTo(1));
+                .until(() -> kafkaTestListener.trackingStatusCounter.get(), equalTo(1));
 
         log.info("Ending DispatchTrackingIntegrationTest...");
 
@@ -105,14 +106,14 @@ class DispatchTrackingIntegrationTest {
     // Kafka Listener Container
     public static class KafkaTestListener {
 
-        AtomicInteger dispatchedPreparingCounter = new AtomicInteger(0);
+        AtomicInteger trackingStatusCounter = new AtomicInteger(0);
 
-        @KafkaListener(topics = DISPATCH_TRACKING_TOPIC, groupId = "KafkaIntegrationTestGroup",
+        @KafkaListener(topics = TrackingService.TRACKING_TOPIC, groupId = "KafkaIntegrationTestGroup",
                 containerFactory = "kafkaListenerContainerFactory")
 
-        public void listen(final @Payload DispatchPreparing payload) {
-            log.info("Received DispatchPreparing payload: {}", payload);
-            dispatchedPreparingCounter.incrementAndGet();
+        public void listen(final @Payload TrackingStatusUpdated payload) {
+            log.info("Received TrackingStatus payload: {}", payload);
+            trackingStatusCounter.incrementAndGet();
 
         }
 
