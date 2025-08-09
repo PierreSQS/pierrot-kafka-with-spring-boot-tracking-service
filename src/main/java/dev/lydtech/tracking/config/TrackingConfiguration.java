@@ -1,6 +1,5 @@
 package dev.lydtech.tracking.config;
 
-import dev.lydtech.dispatch.event.DispatchPreparing;
 import org.apache.kafka.clients.consumer.ConsumerConfig;
 import org.apache.kafka.clients.producer.ProducerConfig;
 import org.apache.kafka.common.serialization.StringDeserializer;
@@ -27,11 +26,11 @@ import java.util.Map;
 public class TrackingConfiguration {
 
     @Bean
-    public ConcurrentKafkaListenerContainerFactory<String, DispatchPreparing> kafkaListenerContainerFactory(
-            ConsumerFactory<String, DispatchPreparing> consumerFactory) {
+    public ConcurrentKafkaListenerContainerFactory<String, Object> kafkaListenerContainerFactory(
+            ConsumerFactory<String, Object> consumerFactory) {
 
         // Create a ConcurrentKafkaListenerContainerFactory for String keys and Object values
-        ConcurrentKafkaListenerContainerFactory<String, DispatchPreparing> factory
+        ConcurrentKafkaListenerContainerFactory<String, Object> factory
                 = new ConcurrentKafkaListenerContainerFactory<>();
 
         factory.setConsumerFactory(consumerFactory);
@@ -40,14 +39,13 @@ public class TrackingConfiguration {
 
     // create a ConsumerFactory Bean
     @Bean
-    public ConsumerFactory<String, DispatchPreparing> consumerFactory(@Value("${kafka.bootstrap-servers}") String bootstrapAddress) {
+    public ConsumerFactory<String, Object> consumerFactory(@Value("${kafka.bootstrap-servers}") String bootstrapAddress) {
 
         // Create a ConsumerFactory for Kafka consumers with String keys and Object values
         Map<String, Object> config = new HashMap<>();
         config.put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, bootstrapAddress);
         config.put(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, ErrorHandlingDeserializer.class);
         config.put(ErrorHandlingDeserializer.VALUE_DESERIALIZER_CLASS, JsonDeserializer.class);
-        config.put(JsonDeserializer.VALUE_DEFAULT_TYPE, DispatchPreparing.class);
         config.put(ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class);
 
         return new DefaultKafkaConsumerFactory<>(config);
