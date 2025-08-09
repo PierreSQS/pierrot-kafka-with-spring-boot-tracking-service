@@ -27,11 +27,11 @@ import java.util.Map;
 public class TrackingConfiguration {
 
     @Bean
-    public ConcurrentKafkaListenerContainerFactory<String, Object> kafkaListenerContainerFactory(
-            ConsumerFactory<String, Object> consumerFactory) {
+    public ConcurrentKafkaListenerContainerFactory<String, DispatchPreparing> kafkaListenerContainerFactory(
+            ConsumerFactory<String, DispatchPreparing> consumerFactory) {
 
         // Create a ConcurrentKafkaListenerContainerFactory for String keys and Object values
-        ConcurrentKafkaListenerContainerFactory<String, Object> factory
+        ConcurrentKafkaListenerContainerFactory<String, DispatchPreparing> factory
                 = new ConcurrentKafkaListenerContainerFactory<>();
 
         factory.setConsumerFactory(consumerFactory);
@@ -40,7 +40,7 @@ public class TrackingConfiguration {
 
     // create a ConsumerFactory Bean
     @Bean
-    public ConsumerFactory<String, Object> consumerFactory(@Value("${kafka.bootstrap-servers}") String bootstrapAddress) {
+    public ConsumerFactory<String, DispatchPreparing> consumerFactory(@Value("${kafka.bootstrap-servers}") String bootstrapAddress) {
 
         // Create a ConsumerFactory for Kafka consumers with String keys and Object values
         Map<String, Object> config = new HashMap<>();
