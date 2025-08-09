@@ -25,6 +25,8 @@ import java.util.Map;
 @Configuration
 public class TrackingConfiguration {
 
+    private static final String TRUSTED_PACKAGES = "dev.lydtech.dispatch.event";
+
     @Bean
     public ConcurrentKafkaListenerContainerFactory<String, Object> kafkaListenerContainerFactory(
             ConsumerFactory<String, Object> consumerFactory) {
@@ -47,6 +49,7 @@ public class TrackingConfiguration {
         config.put(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, ErrorHandlingDeserializer.class);
         config.put(ErrorHandlingDeserializer.VALUE_DESERIALIZER_CLASS, JsonDeserializer.class);
         config.put(ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class);
+        config.put(JsonDeserializer.TRUSTED_PACKAGES, TRUSTED_PACKAGES);
 
         return new DefaultKafkaConsumerFactory<>(config);
     }
