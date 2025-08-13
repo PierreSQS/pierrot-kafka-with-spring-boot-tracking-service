@@ -1,5 +1,6 @@
 package dev.lydtech.tracking.handler;
 
+import dev.lydtech.dispatch.event.DispatchCompleted;
 import dev.lydtech.dispatch.event.DispatchPreparing;
 import dev.lydtech.tracking.service.TrackingService;
 import lombok.RequiredArgsConstructor;
@@ -23,10 +24,10 @@ public class DispatchTrackingHandler {
 
 
     /**
-     * This method listens to the "dispatch.tracking" topic and processes incoming messages.
-     * It is annotated with @KafkaListener to indicate that it is a Kafka consumer.
+     * Handles DispatchPreparing events received from the "dispatch.tracking" Kafka topic.
+     * Invoked automatically when a DispatchPreparing message is consumed.
      *
-     * @param payload The message payload received from the Kafka topic.
+     * @param payload the DispatchPreparing event payload received from Kafka
      */
     @KafkaHandler
     public void listen(DispatchPreparing payload) {
@@ -40,4 +41,25 @@ public class DispatchTrackingHandler {
             log.error("Error processing tracking message: {}", payload, e);
         }
     }
+
+    /**
+     * Handles messages of type DispatchCompleted received from the "dispatch.tracking" Kafka topic.
+     * Processes the payload using the trackingService.
+     *
+     * @param payload the DispatchCompleted event payload received from Kafka
+     */
+    @KafkaHandler
+    public void listen(DispatchCompleted payload) {
+        // This method will be called when a message is received from the "dispatch.tracking" topic
+        // The payload is expected to be a DispatchPreparing object
+        log.info("Received DispatchCompleted payload: {}", payload);
+
+        try {
+            trackingService.process(payload);
+        } catch (Exception e) {
+            log.error("Error processing tracking message: {}", payload, e);
+        }
+    }
+
+
 }
