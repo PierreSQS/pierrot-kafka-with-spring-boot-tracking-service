@@ -1,5 +1,6 @@
 package dev.lydtech.tracking.integration;
 
+import dev.lydtech.dispatch.event.DispatchCompleted;
 import dev.lydtech.dispatch.event.DispatchPreparing;
 import dev.lydtech.dispatch.event.TrackingStatusUpdated;
 import dev.lydtech.tracking.config.TrackingConfiguration;
@@ -12,6 +13,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.context.annotation.Bean;
+import org.springframework.kafka.annotation.KafkaHandler;
 import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.kafka.config.KafkaListenerEndpointRegistry;
 import org.springframework.kafka.core.KafkaTemplate;
@@ -66,12 +68,12 @@ class DispatchTrackingIntegrationTest {
     }
 
     @Test
-    void testDispatchTrackingFlow() throws Exception {
+    void testDispatchPreparingFlow() throws Exception {
 
         // This test would verify the end-to-end flow of dispatch tracking
         // by sending a DispatchPreparing event and checking if it is received by the Kafka listener.
 
-        log.info("Starting DispatchTrackingIntegrationTest...");
+        log.info("Starting DispatchPreparingIntegrationTest...");
         DispatchPreparing dispatchPreparing = TestEventData.buildDispatchPreparingEvent(UUID.randomUUID());
 
         log.info("Sending DispatchPreparing event: {}", dispatchPreparing);
@@ -82,7 +84,29 @@ class DispatchTrackingIntegrationTest {
         await().atMost(10, TimeUnit.SECONDS)
                 .until(() -> kafkaTestListener.trackingStatusCounter.get(), equalTo(1));
 
-        log.info("Ending DispatchTrackingIntegrationTest...");
+        log.info("Ending DispatchPreparingIntegrationTest...");
+
+    }
+
+
+    @Test
+    void testDispatchCompletedFlow() throws Exception {
+
+        // This test would verify the end-to-end flow of dispatch tracking
+        // by sending a DispatchCompleted event and checking if it is received by the Kafka listener.
+
+        log.info("Starting DispatchCompletedIntegrationTest...");
+        DispatchCompleted dispatchCompleted = TestEventData.buildDispatchCompletedEvent(UUID.randomUUID());
+
+        log.info("Sending DispatchCompleted event: {}", dispatchCompleted);
+        sendEventMessage(dispatchCompleted);
+
+        log.info("Waiting for DispatchCompleted event to be processed...");
+        // Wait for the listener to process the event
+        await().atMost(10, TimeUnit.SECONDS)
+                .until(() -> kafkaTestListener.trackingStatusCounter.get(), equalTo(1));
+
+        log.info("Ending DispatchCompletedIntegrationTest...");
 
     }
 
@@ -106,13 +130,13 @@ class DispatchTrackingIntegrationTest {
     }
 
     // Kafka Listener Container
+    @KafkaListener(topics = TrackingService.TRACKING_TOPIC, groupId = "KafkaIntegrationTestGroup",
+            containerFactory = "kafkaListenerContainerFactory")
     public static class KafkaTestListener {
 
         AtomicInteger trackingStatusCounter = new AtomicInteger(0);
 
-        @KafkaListener(topics = TrackingService.TRACKING_TOPIC, groupId = "KafkaIntegrationTestGroup",
-                containerFactory = "kafkaListenerContainerFactory")
-
+        @KafkaHandler
         public void listen(final @Payload TrackingStatusUpdated payload) {
             log.info("Received TrackingStatus payload: {}", payload);
             trackingStatusCounter.incrementAndGet();
