@@ -2,8 +2,6 @@ package dev.lydtech.tracking.util;
 
 import dev.lydtech.dispatch.event.DispatchCompleted;
 import dev.lydtech.dispatch.event.DispatchPreparing;
-import dev.lydtech.dispatch.event.Status;
-import dev.lydtech.dispatch.event.TrackingStatusUpdated;
 
 import java.time.LocalDate;
 import java.util.UUID;
@@ -22,10 +20,4 @@ public class TestEventData {
                 .build();
     }
 
-    public static TrackingStatusUpdated buildTrackingStatusUpdatedEvent(UUID orderId, Status status) {
-        return TrackingStatusUpdated.builder()
-                .orderId(orderId)
-                .status(status)
-                .build();
-    }
 }

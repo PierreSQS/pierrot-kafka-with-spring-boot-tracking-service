@@ -29,11 +29,11 @@ public class TrackingService {
                 .status(Status.DISPATCH_PREPARING)
                 .build();
 
-        // 2. Send the tracking status update to Kafka synchronously
-        log.info("Sending tracking status update for order ID: {}", payload.getOrderId());
+        // 2. Send the tracking status to Kafka synchronously
+        log.info("Sending tracking status PREPARING for order ID: {}", payload.getOrderId());
         kafkaTemplate.send(TRACKING_TOPIC, trackingStatusUpdated).get();
 
-        log.info("Tracking update processed : {}", trackingStatusUpdated);
+        log.info("Tracking Preparing processed : {}", trackingStatusUpdated);
     }
 
     public void processDispatchCompleted(DispatchCompleted payload) throws Exception {
@@ -48,7 +48,7 @@ public class TrackingService {
                 .build();
 
         // 2. Send the tracking status update to Kafka synchronously
-        log.info("Sending tracking status completed for order ID: {}", payload.getOrderId());
+        log.info("Sending tracking status COMPLETED for order ID: {}", payload.getOrderId());
         kafkaTemplate.send(TRACKING_TOPIC, trackingStatusUpdated).get();
 
         log.info("Tracking Completed processed : {}", trackingStatusUpdated);
