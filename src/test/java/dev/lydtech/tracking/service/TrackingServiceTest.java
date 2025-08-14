@@ -31,7 +31,7 @@ class TrackingServiceTest {
     }
 
     @Test
-    void process_Success() throws Exception {
+    void process_DispatchPreparing_Success() throws Exception {
 
         // Given a DispatchPreparing event
         DispatchPreparing dispatchPreparing = TestEventData.buildDispatchPreparingEvent(UUID.randomUUID());
@@ -45,14 +45,14 @@ class TrackingServiceTest {
                 .willReturn(mock(CompletableFuture.class));
 
         // When the process method is called
-        trackingService.process(dispatchPreparing);
+        trackingService.processDispatchPreparing(dispatchPreparing);
 
         // Verify that the event was sent to the Kafka topic
         verify(kafkaProducerMock).send("tracking.status", trackingStatusUpdated);
     }
 
     @Test
-    void process_ProducerThrowsException() {
+    void process_DispatchPreparing_ProducerThrowsException() {
         // Given a DispatchPreparing event
         DispatchPreparing dispatchPreparing = TestEventData.buildDispatchPreparingEvent(UUID.randomUUID());
 
@@ -61,7 +61,7 @@ class TrackingServiceTest {
                 .willThrow(new RuntimeException("Producer failure"));
 
         // When the process method is called, it should throw an exception
-        assertThatThrownBy(() -> trackingService.process(dispatchPreparing))
+        assertThatThrownBy(() -> trackingService.processDispatchPreparing(dispatchPreparing))
                 .isInstanceOf(RuntimeException.class)
                 .hasMessage("Producer failure");
 

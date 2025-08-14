@@ -30,13 +30,13 @@ public class DispatchTrackingHandler {
      * @param payload the DispatchPreparing event payload received from Kafka
      */
     @KafkaHandler
-    public void listen(DispatchPreparing payload) {
+    public void listenDispatchPreparing(DispatchPreparing payload) {
         // This method will be called when a message is received from the "dispatch.tracking" topic
         // The payload is expected to be a DispatchPreparing object
         log.info("Received DispatchPreparing payload: {}", payload);
 
         try {
-            trackingService.process(payload);
+            trackingService.processDispatchPreparing(payload);
         } catch (Exception e) {
             log.error("Error processing tracking message: {}", payload, e);
         }
@@ -49,13 +49,13 @@ public class DispatchTrackingHandler {
      * @param payload the DispatchCompleted event payload received from Kafka
      */
     @KafkaHandler
-    public void listen(DispatchCompleted payload) {
+    public void listenDispatchCompleted(DispatchCompleted payload) {
         // This method will be called when a message is received from the "dispatch.tracking" topic
         // The payload is expected to be a DispatchPreparing object
         log.info("Received DispatchCompleted payload: {}", payload);
 
         try {
-            trackingService.process(payload);
+            trackingService.processDispatchCompleted(payload);
         } catch (Exception e) {
             log.error("Error processing tracking message: {}", payload, e);
         }

@@ -25,22 +25,22 @@ class DispatchTrackingHandlerTest {
     }
 
     @Test
-    void listen_Success() throws Exception {
-        dispatchTrackingHandler.listen(dispatchPreparing);
-        verify(trackingServMock).process(dispatchPreparing);
+    void listen_DispatchPreparing_Success() throws Exception {
+        dispatchTrackingHandler.listenDispatchPreparing(dispatchPreparing);
+        verify(trackingServMock).processDispatchPreparing(dispatchPreparing);
     }
 
     @Test
-    void listen_ServiceThrowsException() throws Exception {
+    void listen_DispatchPreparing_ServiceThrowsException() throws Exception {
         // given
         // Mock the service to throw an exception when processing the event
-        doThrow(new RuntimeException("Service failure")).when(trackingServMock).process(dispatchPreparing);
+        doThrow(new RuntimeException("Service failure")).when(trackingServMock).processDispatchPreparing(dispatchPreparing);
 
         // when
-        dispatchTrackingHandler.listen(dispatchPreparing);
+        dispatchTrackingHandler.listenDispatchPreparing(dispatchPreparing);
 
         // verify that the service was called
-        verify(trackingServMock).process(dispatchPreparing);
+        verify(trackingServMock).processDispatchPreparing(dispatchPreparing);
 
     }
 }

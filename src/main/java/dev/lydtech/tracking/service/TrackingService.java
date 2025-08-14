@@ -18,7 +18,7 @@ public class TrackingService {
 
     private final KafkaTemplate<String, Object> kafkaTemplate;
 
-    public void process(DispatchPreparing payload) throws Exception {
+    public void processDispatchPreparing(DispatchPreparing payload) throws Exception {
         log.info("Processing DispatchPreparing payload: {}", payload);
 
         // Process the DispatchPreparing information
@@ -36,7 +36,7 @@ public class TrackingService {
         log.info("Tracking update processed : {}", trackingStatusUpdated);
     }
 
-    public void process(DispatchCompleted payload) throws Exception {
+    public void processDispatchCompleted(DispatchCompleted payload) throws Exception {
         log.info("Processing DispatchCompleted payload: {}", payload);
 
         // Process the DispatchCompleted information
