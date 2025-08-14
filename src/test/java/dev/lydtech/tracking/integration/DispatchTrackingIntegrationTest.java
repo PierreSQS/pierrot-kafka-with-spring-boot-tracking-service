@@ -75,7 +75,7 @@ class DispatchTrackingIntegrationTest {
         DispatchPreparing dispatchPreparing = TestEventData.buildDispatchPreparingEvent(UUID.randomUUID());
 
         log.info("Sending DispatchPreparing event: {}", dispatchPreparing);
-        sendEventMessage(DISPATCH_TRACKING_TOPIC, dispatchPreparing);
+        sendEventMessage(dispatchPreparing);
 
         log.info("Waiting for DispatchPreparing event to be processed...");
         // Wait for the listener to process the event
@@ -86,10 +86,12 @@ class DispatchTrackingIntegrationTest {
 
     }
 
-    private void sendEventMessage(String topic, Object object) throws Exception {
+    // for tests in the future, we can use this method to send messages to Kafka topics
+    // we temporarily removed the topic parameter since we are only testing the dispatch tracking topic
+    private void sendEventMessage(Object object) throws Exception {
         kafkaTemplate.send(MessageBuilder
                 .withPayload(object)
-                .setHeader(KafkaHeaders.TOPIC, topic)
+                .setHeader(KafkaHeaders.TOPIC, DISPATCH_TRACKING_TOPIC)
                 .build()).get();
     }
 
