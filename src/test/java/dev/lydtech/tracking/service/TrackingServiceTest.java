@@ -1,5 +1,6 @@
 package dev.lydtech.tracking.service;
 
+import dev.lydtech.dispatch.event.DispatchCompleted;
 import dev.lydtech.dispatch.event.DispatchPreparing;
 import dev.lydtech.dispatch.event.Status;
 import dev.lydtech.dispatch.event.TrackingStatusUpdated;
@@ -35,6 +36,7 @@ class TrackingServiceTest {
 
         // Given a DispatchPreparing event
         DispatchPreparing dispatchPreparing = TestEventData.buildDispatchPreparingEvent(UUID.randomUUID());
+
         TrackingStatusUpdated trackingStatusUpdated = TrackingStatusUpdated.builder()
                 .orderId(dispatchPreparing.getOrderId())
                 .status(Status.DISPATCH_PREPARING)
@@ -46,6 +48,27 @@ class TrackingServiceTest {
 
         // When the process method is called
         trackingService.processDispatchPreparing(dispatchPreparing);
+
+        // Verify that the event was sent to the Kafka topic
+        verify(kafkaProducerMock).send("tracking.status", trackingStatusUpdated);
+    }
+
+    @Test
+    void process_DispatchCompleted_Success() throws Exception {
+        // Given a DispatchCompleted event
+        DispatchCompleted dispatchCompleted = TestEventData.buildDispatchCompletedEvent(UUID.randomUUID());
+
+        TrackingStatusUpdated trackingStatusUpdated = TrackingStatusUpdated.builder()
+                .orderId(dispatchCompleted.getOrderId())
+                .status(Status.DISPATCH_COMPLETED)
+                .build();
+
+        // Mock the Kafka producer to simulate sending the event
+        given(kafkaProducerMock.send(eq("tracking.status"), any(TrackingStatusUpdated.class)))
+                .willReturn(mock(CompletableFuture.class));
+
+        // When the process method is called
+        trackingService.processDispatchCompleted(dispatchCompleted);
 
         // Verify that the event was sent to the Kafka topic
         verify(kafkaProducerMock).send("tracking.status", trackingStatusUpdated);
@@ -66,4 +89,20 @@ class TrackingServiceTest {
                 .hasMessage("Producer failure");
 
     }
+
+    @Test
+    void process_DispatchCompleted_ProducerThrowsException() {
+        // Given a DispatchCompleted event
+        DispatchCompleted dispatchCompleted = TestEventData.buildDispatchCompletedEvent(UUID.randomUUID());
+
+        // Mock the Kafka producer to throw an exception when sending the event
+        given(kafkaProducerMock.send(eq("tracking.status"), any(TrackingStatusUpdated.class)))
+                .willThrow(new RuntimeException("Producer failure"));
+
+        // When the process method is called, it should throw an exception
+        assertThatThrownBy(() -> trackingService.processDispatchCompleted(dispatchCompleted))
+                .isInstanceOf(RuntimeException.class)
+                .hasMessage("Producer failure");
+    }
+
 }
